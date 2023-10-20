@@ -3,7 +3,9 @@ package com.couchbase.gettingstarted;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import com.couchbase.lite.Blob;
 import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DatabaseConfiguration;
@@ -58,6 +60,22 @@ public class CouchbaseLitePluginDriver {
         Document updatedDocument = plugin.viewDocument(docId, "myCollection", "myScope");
         System.out.println("Updated document with ID: " + updatedDocument.getId());
         System.out.println("Updated document language: " + updatedDocument.getString("language"));
+
+        // Create a Blob object from some binary data
+        byte[] byteData = "dummy data".getBytes();
+        Blob blob = new Blob("text/plain", byteData);
+
+        // Add the Blob as an attachment to a document
+        docId = "doc1";
+        plugin.addBlobAttachment(docId, "myCollection", "myScope", blob);
+
+        document = plugin.viewDocument(docId, "myCollection", "myScope");
+        Blob retrievedBlob = document.getBlob("attachment");
+
+        if (retrievedBlob != null) {
+            String content = new String(Objects.requireNonNull(retrievedBlob.getContent()));
+            System.out.println("Retrieved blob content: " + content);
+        }        
 
         // Close the database
         plugin.closeDatabase();
