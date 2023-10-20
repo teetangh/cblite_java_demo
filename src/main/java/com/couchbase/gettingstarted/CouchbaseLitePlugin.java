@@ -9,6 +9,7 @@ import com.couchbase.lite.Blob;
 import com.couchbase.lite.Collection;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
+import com.couchbase.lite.DatabaseConfiguration;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Scope;
@@ -19,6 +20,10 @@ public class CouchbaseLitePlugin {
 
     public void createDatabase(String dbName) throws CouchbaseLiteException {
         database = new Database(dbName);
+    }
+
+    public void createDatabase(String dbName, DatabaseConfiguration config) throws CouchbaseLiteException {
+        database = new Database(dbName, config);
     }
 
     public void createCollection(String collectionName, String scopeName) throws CouchbaseLiteException {
@@ -76,6 +81,15 @@ public class CouchbaseLitePlugin {
             e.printStackTrace();
         }
     }
+
+    public void saveDocument(MutableDocument doc, String collectionName, String scopeName) throws CouchbaseLiteException {
+        try {
+            database.getCollection(collectionName, scopeName).save(doc);
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+    }
+    
 
     public void addBlobAttachment(String docId, String collectionName, String scopeName, Blob blob) throws CouchbaseLiteException {
         MutableDocument doc = null;
